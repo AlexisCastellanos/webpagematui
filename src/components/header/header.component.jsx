@@ -123,6 +123,7 @@ class Header extends React.Component {
               {this.props.currentUser ? (
                 <React.Fragment>
                   <Link
+                    style={{ color: "#f50057" }}
                     component="button"
                     variant="subtitle1"
                     underline="none"
@@ -133,7 +134,6 @@ class Header extends React.Component {
                   </Link>
                   {this.props.currentUser.admin ? (
                     <Link
-                      component="button"
                       variant="subtitle1"
                       underline="none"
                       className={clsx(classes.rightLink)}
@@ -145,6 +145,7 @@ class Header extends React.Component {
                 </React.Fragment>
               ) : (
                 <Link
+                  style={{ color: "#f50057" }}
                   component="button"
                   variant="subtitle1"
                   underline="none"
@@ -189,14 +190,17 @@ class Header extends React.Component {
                   className={clsx(classes.rightLink)}
                   href="/signin"
                 >
-                  {"Sign In"}
+                  Sign In
                 </Link>
               )}
             </div>
 
+            {/**
             <CartIcon />
+            */}
+
             <Cart />
-            <TemporaryDrawertempo />
+            {/*<TemporaryDrawertempo />*/}
           </Toolbar>
         </AppBar>
       </div>

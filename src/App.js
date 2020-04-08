@@ -126,7 +126,9 @@ class App extends React.Component {
       <div>
         {/* <Header currentUser={this.state.currentUser} /> */}
         <Header />
-        <Header2 />
+{/** <Header2 />*/}
+        
+
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/shop" component={ShopPage} />
