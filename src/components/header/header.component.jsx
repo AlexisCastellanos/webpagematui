@@ -200,7 +200,7 @@ class Header extends React.Component {
             */}
 
             <Cart />
-            {/*<TemporaryDrawertempo />*/}
+            <TemporaryDrawertempo userInfo='test'/>
           </Toolbar>
         </AppBar>
       </div>

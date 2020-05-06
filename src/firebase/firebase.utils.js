@@ -67,12 +67,23 @@ var docData = {
 };
 export const dummy = (currentUser, items, total) => {
   const createdAt = new Date();
+  var myFirebaseFirestoreTimestampFromDate = firebase.firestore.FieldValue.serverTimestamp();
+  var date = createdAt.getDate();
+  var month = createdAt.getMonth(); //Be careful! January is 0 not 1
+  var year = createdAt.getFullYear();
+
+  var dateString = date + "-" + (month + 1) + "-" + year;
   console.log(currentUser);
+  debugger
   var docData = {
     currentUserID: currentUser.id,
+    currentUserDisplayName: currentUser.displayName,
+    currentUserEmail: currentUser.email,
     items: items,
     total: total,
     date: createdAt,
+    dateExample: firebase.firestore.FieldValue.serverTimestamp()+"",
+    text: "test",
     name: "name 1",
     personal: {
       address: {
@@ -87,7 +98,7 @@ export const dummy = (currentUser, items, total) => {
       },
     },
   };
-  firestore.collection("orders").doc(`${currentUser.id}`).collection("boughts").doc(`${createdAt}`).set(docData).then(function () {
+  firestore.collection("users").doc(`${currentUser.id}`).collection("boughts").doc(`${createdAt}`).set(docData).then(function () {
     console.log("Document successfully written! -> ORDERS");
   })
     .catch(function (error) {
@@ -131,7 +142,30 @@ export const getOrdersFromFirebase = () => {
   return docData
 }
 
-export const convertCollectionsSnapShotToMap = (collections,filt) => {
+export const convertCollectionsSnapShotToMap = (collections, filt) => {
+  const transformedCollection = collections.docs.map(
+    doc => {
+      const { personal, items, currentUserID, total } = doc.data();
+      console.log("doc.data()");
+      console.log(doc.data());
+      return {
+        currentUserID: currentUserID,
+        id: doc.id,
+        personal,
+        items,
+        total
+      };
+
+    });
+  // console.log(transformedCollection);
+  return transformedCollection;
+
+  // return transformedCollection.reduce((accumulator,collection)=>{
+  //   accumulator[collection.personal]=collection;
+  //   return accumulator;
+  // },{});
+};
+export const convertCollectionsSnapShotToMap2 = (collections, filt) => {
   const transformedCollection = collections.docs.map(
     doc => {
       const { personal, items, currentUserID, total } = doc.data();
@@ -155,20 +189,53 @@ export const convertCollectionsSnapShotToMap = (collections,filt) => {
   // },{});
 };
 
-export const convertCollectionsSnapShotToMap2 = (collections) => {
+export const convertCollectionsSnapShotToMapUsers = (collections, filt) => {
   const transformedCollection = collections.docs.map(
     doc => {
-      const { personal, items, currentUserID, total } = doc.data();
-
+      const { admin, email, displayName } = doc.data();
+      console.log("doc.data()");
+      console.log(doc.data());
+      var messageRef = firestore.collection('users').doc(`${doc.id}`)
+        .collection('boughts').get().then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+          });
+        });
+      console.log(messageRef);
       return {
-        // routeName:encodeURI(doc.id.toLowerCase()),
-        currentUserID: currentUserID,
         id: doc.id,
-        personal,
-        items,
-        total
+        admin,
+        email,
+        displayName,
+        messageRef
       };
 
+    });
+  // console.log(transformedCollection);
+  return transformedCollection;
+
+  // return transformedCollection.reduce((accumulator,collection)=>{
+  //   accumulator[collection.personal]=collection;
+  //   return accumulator;
+  // },{});
+};
+
+export const convertCollectionsSnapShotToMapPendings = (collections, filt) => {
+  const transformedCollection = collections.docs.map(
+    doc => {
+      const { admin, email, displayName, docData, ...additionalData } = doc.data();
+      console.log("doc.data()");
+      console.log(doc.data());
+      return {
+        id: doc.id,
+        currentUsr: docData.currentUserID,
+        // date: docData.date.getDate()	,
+        docData,
+        admin,
+        email,
+        displayName
+      };
     });
   // console.log(transformedCollection);
   return transformedCollection;
